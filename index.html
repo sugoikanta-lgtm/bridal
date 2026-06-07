@@ -6,7 +6,6 @@
 <title>結婚式こだわり表 | wedding_pocket</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20px 16px;max-width:480px;margin:0 auto;}
@@ -42,6 +41,14 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
 .profile-name{font-size:13px;font-weight:600;color:#333;margin-bottom:2px;line-height:1.4;}
 .profile-id{font-size:12px;color:#D4537E;}
 .profile-text{font-size:13px;color:#555;line-height:1.7;}
+
+/* 完成ページ */
+.complete-banner{background:linear-gradient(135deg,#D4537E,#e8789e);border-radius:14px;padding:1.25rem;text-align:center;margin-bottom:1.25rem;}
+.complete-banner .emoji{font-size:32px;margin-bottom:6px;}
+.complete-banner h2{font-size:22px;font-weight:700;color:white;margin-bottom:4px;}
+.complete-banner p{font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;}
+.save-hint{background:#FFF8F0;border:1.5px solid #F4C0D1;border-radius:10px;padding:12px 16px;margin-bottom:1.25rem;font-size:13px;color:#72243E;line-height:1.6;text-align:center;}
+
 .sum-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:1.25rem;}
 .sum-card{background:#f7f7f7;border-radius:8px;padding:10px 12px;}
 .sum-lbl{font-size:11px;color:#888;margin-bottom:3px;}
@@ -59,7 +66,7 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
 .bdg-red{background:#FCEBEB;color:#A32D2D;}
 .bdg-pink{background:#FBEAF0;color:#993556;}
 .bdg-amber{background:#FAEEDA;color:#854F0B;}
-.btn-img{background:#D4537E;color:white;border:none;border-radius:8px;padding:14px 24px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;width:100%;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-img{background:#D4537E;color:white;border:none;border-radius:8px;padding:14px 24px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(212,83,126,0.3);}
 .btn-img:hover{opacity:0.85;}
 .btn-img:disabled{opacity:0.6;cursor:not-allowed;}
 .cta-section{display:flex;flex-direction:column;gap:12px;}
@@ -77,12 +84,16 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
 .affili-label{font-size:11px;color:#D4537E;font-weight:500;margin-bottom:2px;}
 .affili-title{font-size:13px;font-weight:500;color:#333;margin-bottom:4px;}
 .affili-sub{font-size:11px;color:#888;margin-bottom:10px;line-height:1.5;}
-.affili-img{max-width:100%;border-radius:6px;display:block;}
+.affili-img{max-width:100%;border-radius:6px;display:block;margin:0 auto;}
+
+/* PDF用非表示エリア */
+#pdf-target{position:fixed;left:-9999px;top:0;width:794px;background:white;padding:32px;font-family:'Hiragino Sans','Meiryo',sans-serif;}
 </style>
 </head>
 <body>
 <div class="prog-bar"><div class="prog-fill" id="prog" style="width:5%"></div></div>
 
+<!-- S0 -->
 <div class="step on" id="s0">
   <div class="cat">ようこそ</div>
   <div class="q">おふたりだけの<br>結婚式こだわり表を作りましょう</div>
@@ -101,6 +112,7 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
   <button class="btn-n" onclick="go(1)" style="width:100%;">はじめる →</button>
 </div>
 
+<!-- S1〜S7 省略なし -->
 <div class="step" id="s1">
   <div class="cat">基本情報 1 / 7</div>
   <div class="q">ゲストの人数はどのくらいですか？</div>
@@ -114,7 +126,6 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
   </div>
   <div class="nav"><button class="btn-b" onclick="go(0)">戻る</button><button class="btn-n" onclick="nxt('guests','e1',2)">次へ →</button><span class="sc">1 / 7</span></div>
 </div>
-
 <div class="step" id="s2">
   <div class="cat">予算 2 / 7</div>
   <div class="q">おふたりの自己負担額の目安は？</div>
@@ -128,7 +139,6 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
   </div>
   <div class="nav"><button class="btn-b" onclick="go(1)">戻る</button><button class="btn-n" onclick="nxt('budget','e2',3)">次へ →</button><span class="sc">2 / 7</span></div>
 </div>
-
 <div class="step" id="s3">
   <div class="cat">花・装飾 3 / 7</div>
   <div class="q">お花へのこだわりはどのくらいですか？</div>
@@ -141,7 +151,6 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
   </div>
   <div class="nav"><button class="btn-b" onclick="go(2)">戻る</button><button class="btn-n" onclick="nxt('flower','e3',4)">次へ →</button><span class="sc">3 / 7</span></div>
 </div>
-
 <div class="step" id="s4">
   <div class="cat">衣装 4 / 7</div>
   <div class="q">衣装はどのようにお考えですか？</div>
@@ -155,7 +164,6 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
   </div>
   <div class="nav"><button class="btn-b" onclick="go(3)">戻る</button><button class="btn-n" onclick="nxt('dress','e4',5)">次へ →</button><span class="sc">4 / 7</span></div>
 </div>
-
 <div class="step" id="s5">
   <div class="cat">写真・動画 5 / 7</div>
   <div class="q">写真・動画の撮影はどうしたいですか？</div>
@@ -169,7 +177,6 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
   </div>
   <div class="nav"><button class="btn-b" onclick="go(4)">戻る</button><button class="btn-n" onclick="nxt('photo','e5',6)">次へ →</button><span class="sc">5 / 7</span></div>
 </div>
-
 <div class="step" id="s6">
   <div class="cat">演出 6 / 7</div>
   <div class="q">やりたい演出を全て選んでください</div>
@@ -184,7 +191,6 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
   </div>
   <div class="nav"><button class="btn-b" onclick="go(5)">戻る</button><button class="btn-n" onclick="nxtMulti(7)">次へ →</button><span class="sc">6 / 7</span></div>
 </div>
-
 <div class="step" id="s7">
   <div class="cat">お名前 7 / 7</div>
   <div class="q">こだわり表に記載するお名前を教えてください</div>
@@ -193,13 +199,30 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
   <div class="nav"><button class="btn-b" onclick="go(6)">戻る</button><button class="btn-n" onclick="showResult()">こだわり表を作成する →</button></div>
 </div>
 
+<!-- 結果ページ -->
 <div class="step" id="s9">
-  <div class="cat">完成</div>
-  <div class="q" id="rtitle" style="margin-bottom:4px;"></div>
-  <div class="hint" style="margin-bottom:1rem">式場見学・契約前に必ず確認してください。<span class="bdg bdg-red">重要</span>マークは特に見落としやすいポイントです。</div>
+
+  <!-- 完成バナー -->
+  <div class="complete-banner">
+    <div class="emoji">🎉</div>
+    <h2 id="rtitle">こだわり表が完成しました！</h2>
+    <p>下のボタンを押して画像を保存し、<br>式場見学・契約の場で活用してください</p>
+  </div>
+
+  <!-- 保存ヒント -->
+  <div class="save-hint">
+    📸 <strong>まず画像を保存してください</strong><br>
+    保存した画像をプリントアウトするか、式場でスマホ画面を見せながら使えます。<br>
+    DMに送ってくれたらさらに詳しい専用リストを無料でお返しします！
+  </div>
+
   <div class="sum-grid" id="sumgrid"></div>
   <div id="checklist" class="rcard"></div>
-  <button class="btn-img" id="save-btn" onclick="saveAsImage()">📸 チェックリストを画像で保存する</button>
+
+  <button class="btn-img" id="save-btn" onclick="saveAsA4Image()">
+    📥 A4サイズの画像で保存する
+  </button>
+
   <div class="cta-section">
     <a class="insta-card" href="https://www.instagram.com/wedding_pocket" target="_blank">
       <div class="insta-top">
@@ -210,23 +233,21 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
         </div>
       </div>
       <div class="insta-badge">✨ 無料DM相談受付中</div>
-      <div class="insta-text">
-        あなただけの<strong>専用こだわりリストを無料で作ります！</strong><br>
-        この画像をInstagramのDMに送ってくれたら、さらに詳しいオリジナルリストをお返しします🎁<br><br>
-        夫婦でブライダルカメラマンをしています。プランナーじゃないからこそ話せる節約術・式場の裏側・選び方のコツを発信中。気軽に話しかけてください！
-      </div>
+      <div class="insta-text">あなただけの<strong>専用こだわりリストを無料で作ります！</strong><br>保存した画像をInstagramのDMに送ってくれたら、さらに詳しいオリジナルリストをお返しします🎁<br><br>夫婦でブライダルカメラマンをしています。プランナーじゃないからこそ話せる節約術・式場の裏側・選び方のコツを発信中。気軽に話しかけてください！</div>
       <div class="insta-btn">📲 @wedding_pocket のInstagramを見る →</div>
     </a>
+
     <div class="affili-block">
       <div class="pr-badge">PR</div>
       <div class="affili-label">表を使って詳しく相談したい方へ</div>
       <div class="affili-title">ハナユメの無料相談デスクで式場を探す</div>
       <div class="affili-sub">プロのアドバイザーがおふたりにぴったりの式場をご紹介。100万円以上おトクになることも！<br><span style="font-size:10px;">※ハナユメから式場見学を予約し成約いただくことが条件です。式場、日時、人数によっては割引額が100万円より下回る場合があります。</span></div>
-      <a href="https://px.a8.net/svt/ejp?a8mat=4B5OO2+2LH2R6+3DOK+60WN5" rel="nofollow">
-        <img class="affili-img" alt="ハナユメ無料相談デスク" src="https://www27.a8.net/svt/bgt?aid=260605730157&wid=001&eno=01&mid=s00000015770001012000&mc=1">
+      <a href="https://px.a8.net/svt/ejp?a8mat=4B5OO2+2LH2R6+3DOK+5Z6WX" rel="nofollow">
+        <img class="affili-img" alt="ハナユメ無料相談デスク" src="https://www29.a8.net/svt/bgt?aid=260605730157&wid=001&eno=01&mid=s00000015770001004000&mc=1">
       </a>
-      <img border="0" width="1" height="1" src="https://www13.a8.net/0.gif?a8mat=4B5OO2+2LH2R6+3DOK+60WN5" alt="">
+      <img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4B5OO2+2LH2R6+3DOK+5Z6WX" alt="">
     </div>
+
     <div class="affili-block">
       <div class="pr-badge">PR</div>
       <div class="affili-label">1から式場を決めたい方へ</div>
@@ -240,8 +261,11 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fff;padding:20p
   </div>
 </div>
 
+<!-- A4用隠しエリア -->
+<div id="pdf-target" style="position:fixed;left:-9999px;top:0;width:794px;padding:40px;background:white;font-family:'Hiragino Sans','Meiryo',sans-serif;"></div>
+
 <script>
-// Firebase初期化
+// Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyA4mKwOdsy9nZiDl4L4JR4pPsEVvwrQAIo",
   authDomain: "weddingpcket.firebaseapp.com",
@@ -251,27 +275,20 @@ const firebaseConfig = {
   messagingSenderId: "144719348558",
   appId: "1:144719348558:web:b95a6023d2799221d9941f"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const countRef = db.ref('bridal_count');
-
-// リアルタイムでカウント表示
 countRef.on('value', snap => {
   document.getElementById('cnt').textContent = snap.val() || 0;
 });
+function incrementCount() { countRef.transaction(n => (n || 0) + 1); }
 
-function incrementCount() {
-  countRef.transaction(n => (n || 0) + 1);
-}
-
-const A = {};
-const MS = [];
+const A = {}, MS = [];
 
 function go(n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('on'));
   document.getElementById('s' + n).classList.add('on');
-  const pct = n === 0 ? 5 : n === 9 ? 100 : Math.round((n / 7) * 88) + 5;
+  const pct = n===0?5:n===9?100:Math.round((n/7)*88)+5;
   document.getElementById('prog').style.width = pct + '%';
   window.scrollTo(0, 0);
 }
@@ -305,99 +322,180 @@ function b(type, text) { return '<span class="bdg bdg-' + type + '">' + text + '
 
 function showResult() {
   const name = document.getElementById('name-input').value || 'あなた';
-  document.getElementById('rtitle').textContent = name + 'さんのこだわり表';
+  document.getElementById('rtitle').textContent = name + 'さんのこだわり表が完成しました！';
   incrementCount();
-  const dF = { high: '華やか重視', mid: 'バランス', low: '最小限' };
-  const dD = { one: 'ドレス1着', color: 'お色直しあり', waso: '和装あり', undecided: '未定' };
-  const dP = { venue: '式場カメラマン', bring: '持ち込み', endroll: '撮って出し', undecided: '未定' };
-  const sL = { firstmeet: 'ファーストミート', movie: '映像演出', endroll2: '撮って出し', firework: '特殊演出', none: 'こだわりなし' };
-  const showDisp = MS.map(v => sL[v] || v).join('・');
-  const rows = { guests: A.guests, budget: A.budget, flower: dF[A.flower], dress: dD[A.dress], photo: dP[A.photo], show: showDisp };
-  const lbls = { guests: 'ゲスト人数', budget: '予算', flower: '花へのこだわり', dress: '衣装', photo: '写真・動画', show: '演出' };
-  let sh = '';
-  Object.keys(lbls).forEach(k => { if (rows[k]) sh += '<div class="sum-card"><div class="sum-lbl">' + lbls[k] + '</div><div class="sum-val">' + rows[k] + '</div></div>'; });
-  document.getElementById('sumgrid').innerHTML = sh;
-  const tight = A.budget === '100万以下';
-  const flH = A.flower === 'high', flL = A.flower === 'low';
-  const waso = A.dress === 'waso', color = A.dress === 'color';
-  const bring = A.photo === 'bring';
-  const endroll = A.photo === 'endroll' || MS.includes('endroll2');
-  const firstmeet = MS.includes('firstmeet');
-  const movie = MS.includes('movie');
-  const firework = MS.includes('firework');
-  const large = A.guests === '80人以上';
-  const secs = [
-    { t: '料理・ドリンクチェック', i: [
-      { t: '見積もりに入っている料理とドリンクコースの内容・ランクを確認する', b: tight ? b('amber', '節約ポイント') : '' },
-      { t: 'ウェルカムドリンクや乾杯酒が含まれているか確認する', b: b('pink', '見落とし注意') },
-      { t: 'ウェディングケーキの内容とサイズを確認する', b: '' },
+
+  const dF={high:'華やか重視',mid:'バランス',low:'最小限'};
+  const dD={one:'ドレス1着',color:'お色直しあり',waso:'和装あり',undecided:'未定'};
+  const dP={venue:'式場カメラマン',bring:'持ち込み',endroll:'撮って出し',undecided:'未定'};
+  const sL={firstmeet:'ファーストミート',movie:'映像演出',endroll2:'撮って出し',firework:'特殊演出',none:'こだわりなし'};
+  const showDisp = MS.map(v => sL[v]||v).join('・');
+  const rows={guests:A.guests,budget:A.budget,flower:dF[A.flower],dress:dD[A.dress],photo:dP[A.photo],show:showDisp};
+  const lbls={guests:'ゲスト人数',budget:'予算',flower:'花へのこだわり',dress:'衣装',photo:'写真・動画',show:'演出'};
+  let sh='';
+  Object.keys(lbls).forEach(k=>{if(rows[k])sh+='<div class="sum-card"><div class="sum-lbl">'+lbls[k]+'</div><div class="sum-val">'+rows[k]+'</div></div>';});
+  document.getElementById('sumgrid').innerHTML=sh;
+
+  const tight=A.budget==='100万以下';
+  const flH=A.flower==='high',flL=A.flower==='low';
+  const waso=A.dress==='waso',color=A.dress==='color';
+  const bring=A.photo==='bring';
+  const endroll=A.photo==='endroll'||MS.includes('endroll2');
+  const firstmeet=MS.includes('firstmeet');
+  const movie=MS.includes('movie');
+  const firework=MS.includes('firework');
+  const large=A.guests==='80人以上';
+
+  const secs=[
+    {t:'料理・ドリンクチェック',i:[
+      {t:'見積もりに入っている料理とドリンクコースの内容・ランクを確認する',b:tight?b('amber','節約ポイント'):''},
+      {t:'ウェルカムドリンクや乾杯酒が含まれているか確認する',b:b('pink','見落とし注意')},
+      {t:'ウェディングケーキの内容とサイズを確認する',b:''},
     ]},
-    { t: '花・装飾チェック', i: [
-      { t: '高砂の形（ソファ・テーブル等）と背景装飾の内容を確認する', b: flH ? b('red', '重要') : flL ? b('amber', '節約ポイント') : '' },
-      { t: 'SNSや公式サイトの写真を見せて「このイメージを再現すると総額いくらになりますか？」と確認する', b: flH ? b('red', '重要') : '' },
-      { t: 'フラワーシャワーの希望を伝える', b: '' },
-      { t: 'ブーケ・ブートニアの希望を伝える', b: '' },
-      { t: '親御様への花束贈呈を希望するか伝える', b: '' },
+    {t:'花・装飾チェック',i:[
+      {t:'高砂の形（ソファ・テーブル等）と背景装飾の内容を確認する',b:flH?b('red','重要'):flL?b('amber','節約ポイント'):''},
+      {t:'SNSや公式サイトの写真を見せて「このイメージを再現すると総額いくらになりますか？」と確認する',b:flH?b('red','重要'):''},
+      {t:'フラワーシャワーの希望を伝える',b:''},
+      {t:'ブーケ・ブートニアの希望を伝える',b:''},
+      {t:'親御様への花束贈呈を希望するか伝える',b:''},
     ]},
-    { t: '衣装チェック', i: [
-      { t: '衣装代・着付け代・ヘアメイク代が別料金か確認する', b: b('red', '重要') },
-      { t: '小物類（ティアラ・グローブ・ベール・アクセサリー・ブライダルインナー等）が見積もりに含まれているか確認する', b: b('pink', '見落とし注意') },
-      { t: 'ドレスの追加料金帯（プラン内で選べる衣装がどの程度あるか）を確認する', b: '' },
-      { t: 'ヘアメイクリハーサル代が含まれているか確認する', b: b('pink', '見落とし注意') },
-      { t: '新郎ヘアメイクの希望を伝える', b: '' },
-      { t: '衣装保険・破損補償の加入有無と料金を確認する', b: '' },
-      ...(waso ? [{ t: '和装の着付け時間と会場内の移動導線を確認する', b: b('red', '和装必須') }] : []),
-      ...(color ? [{ t: 'お色直し後の入場演出の希望を契約前に伝える', b: b('pink', '色直し選択') }] : []),
+    {t:'衣装チェック',i:[
+      {t:'衣装代・着付け代・ヘアメイク代が別料金か確認する',b:b('red','重要')},
+      {t:'小物類（ティアラ・グローブ・ベール・アクセサリー・ブライダルインナー等）が見積もりに含まれているか確認する',b:b('pink','見落とし注意')},
+      {t:'ドレスの追加料金帯（プラン内で選べる衣装がどの程度あるか）を確認する',b:''},
+      {t:'ヘアメイクリハーサル代が含まれているか確認する',b:b('pink','見落とし注意')},
+      {t:'新郎ヘアメイクの希望を伝える',b:''},
+      {t:'衣装保険・破損補償の加入有無と料金を確認する',b:''},
+      ...(waso?[{t:'和装の着付け時間と会場内の移動導線を確認する',b:b('red','和装必須')}]:[]),
+      ...(color?[{t:'お色直し後の入場演出の希望を契約前に伝える',b:b('pink','色直し選択')}]:[]),
     ]},
-    { t: '写真・動画チェック', i: [
-      { t: '写真・動画の両方が見積もりに含まれているか確認する', b: b('red', '重要') },
-      { t: '挙式〜披露宴まで1日通して撮影できるか確認する', b: b('pink', '見落とし注意') },
-      { t: '写真の納品枚数を確認する', b: '' },
-      { t: 'データ納品かアルバム納品かを確認する', b: '' },
-      ...(bring ? [{ t: '持ち込みカメラマンの可否・持ち込み料を確認する', b: b('red', '重要') }] : []),
-      ...(endroll ? [{ t: '撮って出しエンドロールの対応可否・費用・過去実績を確認する', b: b('red', 'こだわり項目') }] : []),
+    {t:'写真・動画チェック',i:[
+      {t:'写真・動画の両方が見積もりに含まれているか確認する',b:b('red','重要')},
+      {t:'挙式〜披露宴まで1日通して撮影できるか確認する',b:b('pink','見落とし注意')},
+      {t:'写真の納品枚数を確認する',b:''},
+      {t:'データ納品かアルバム納品かを確認する',b:''},
+      ...(bring?[{t:'持ち込みカメラマンの可否・持ち込み料を確認する',b:b('red','重要')}]:[]),
+      ...(endroll?[{t:'撮って出しエンドロールの対応可否・費用・過去実績を確認する',b:b('red','こだわり項目')}]:[]),
     ]},
-    { t: '引き出物チェック', i: [
-      { t: '気に入っている引き出物カタログやブランドがある場合は取扱い可能か確認する', b: tight ? b('amber', '節約ポイント') : '' },
-      { t: '提携先に希望の商品がある場合は値引きや特典の交渉をする', b: tight ? b('amber', '節約ポイント') : '' },
+    {t:'引き出物チェック',i:[
+      {t:'気に入っている引き出物カタログやブランドがある場合は取扱い可能か確認する',b:tight?b('amber','節約ポイント'):''},
+      {t:'提携先に希望の商品がある場合は値引きや特典の交渉をする',b:tight?b('amber','節約ポイント'):''},
     ]},
-    { t: '演出チェック', i: [
-      { t: '使用したい楽曲の著作権・使用可否を確認する', b: '' },
-      { t: '絶対にやりたい演出をすべて契約前にプランナーへ伝える', b: b('red', '重要') },
-      ...(firstmeet ? [{ t: 'ファーストミートの希望と段取りを確認する', b: b('red', 'こだわり項目') }] : []),
-      { t: 'スクリーン使用料・音響設備使用料が含まれているか確認する', b: movie || large ? b('pink', '見落とし注意') : '' },
-      ...(movie ? [{ t: 'プロフィールムービー・感謝ムービーの制作費・持ち込み可否を確認する', b: b('red', 'こだわり項目') }] : []),
-      ...(firework ? [{ t: '特殊演出（花火・バルーン等）の実施可否・費用・安全基準を確認する', b: b('red', 'こだわり項目') }] : []),
+    {t:'演出チェック',i:[
+      {t:'使用したい楽曲の著作権・使用可否を確認する',b:''},
+      {t:'絶対にやりたい演出をすべて契約前にプランナーへ伝える',b:b('red','重要')},
+      ...(firstmeet?[{t:'ファーストミートの希望と段取りを確認する',b:b('red','こだわり項目')}]:[]),
+      {t:'スクリーン使用料・音響設備使用料が含まれているか確認する',b:movie||large?b('pink','見落とし注意'):''},
+      ...(movie?[{t:'プロフィールムービー・感謝ムービーの制作費・持ち込み可否を確認する',b:b('red','こだわり項目')}]:[]),
+      ...(firework?[{t:'特殊演出（花火・バルーン等）の実施可否・費用・安全基準を確認する',b:b('red','こだわり項目')}]:[]),
     ]},
   ];
-  let html = '';
-  secs.forEach(sec => {
-    if (!sec.i.length) return;
-    html += '<div class="rsec"><div class="rsec-title">' + sec.t + '</div>';
-    sec.i.forEach(item => { html += '<div class="ci" onclick="tog(this)"><div class="cb"></div><div class="ci-text">' + item.t + item.b + '</div></div>'; });
-    html += '</div>';
+
+  let html='';
+  secs.forEach(sec=>{
+    if(!sec.i.length)return;
+    html+='<div class="rsec"><div class="rsec-title">'+sec.t+'</div>';
+    sec.i.forEach(item=>{html+='<div class="ci" onclick="tog(this)"><div class="cb"></div><div class="ci-text">'+item.t+item.b+'</div></div>';});
+    html+='</div>';
   });
-  document.getElementById('checklist').innerHTML = html;
+  document.getElementById('checklist').innerHTML=html;
+
+  // A4用隠しエリアにも同じ内容をセット
+  buildA4Content(name, sh, html, rows, lbls);
   go(9);
 }
 
-async function saveAsImage() {
+function buildA4Content(name, sumHtml, checkHtml, rows, lbls) {
+  const target = document.getElementById('pdf-target');
+  let sumRows = '';
+  Object.keys(lbls).forEach(k => {
+    if (rows[k]) sumRows += '<div style="display:inline-block;margin:0 12px 4px 0;white-space:nowrap;"><span style="font-size:9px;color:#993556;">'+lbls[k]+'：</span><span style="font-size:11px;font-weight:600;color:#4B1528;">'+rows[k]+'</span></div>';
+  });
+
+  const cl = document.getElementById('checklist');
+  let secHtml = '';
+  cl.querySelectorAll('.rsec').forEach(sec => {
+    const title = sec.querySelector('.rsec-title').textContent;
+    let items = '';
+    sec.querySelectorAll('.ci-text').forEach(ci => {
+      const clone = ci.cloneNode(true);
+      clone.querySelectorAll('.bdg').forEach(bdg => {
+        const cls = bdg.className;
+        let bg='#FBEAF0',col='#993556';
+        if(cls.includes('red')){bg='#FCEBEB';col='#A32D2D';}
+        else if(cls.includes('amber')){bg='#FAEEDA';col='#854F0B';}
+        bdg.style.cssText='background:'+bg+';color:'+col+';border-radius:3px;padding:1px 4px;font-size:8px;font-weight:600;margin-left:3px;display:inline-block;vertical-align:middle;white-space:nowrap;';
+      });
+      items += '<tr><td style="width:14px;padding:2px 5px 2px 0;vertical-align:top;"><div style="width:11px;height:11px;border:1.5px solid #D4537E;border-radius:2px;margin-top:2px;"></div></td><td style="font-size:9.5px;line-height:1.5;color:#333;padding:2px 0;">'+clone.innerHTML+'</td></tr>';
+    });
+    secHtml += '<div style="margin-bottom:10px;break-inside:avoid;"><div style="font-size:9px;font-weight:600;color:#D4537E;border-bottom:1px solid #F4C0D1;padding-bottom:3px;margin-bottom:5px;">'+title+'</div><table style="width:100%;border-collapse:collapse;">'+items+'</table></div>';
+  });
+
+  const memoLines = '<div style="border-bottom:1px solid #e0e0e0;height:22px;"></div>'.repeat(3);
+
+  target.innerHTML =
+    '<div style="text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #D4537E;">' +
+      '<div style="font-size:8px;color:#D4537E;letter-spacing:0.15em;margin-bottom:4px;">WEDDING POCKET</div>' +
+      '<div style="font-size:18px;font-weight:500;margin-bottom:2px;">' + name + 'さんのこだわり表</div>' +
+      '<div style="font-size:8px;color:#aaa;">結婚式場見学・契約前チェックリスト</div>' +
+    '</div>' +
+    '<div style="background:#FBEAF0;border-radius:5px;padding:7px 10px;margin-bottom:10px;line-height:1.8;">' + sumRows + '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 18px;">' + secHtml + '</div>' +
+    '<div style="margin-top:10px;border-top:1px solid #F4C0D1;padding-top:8px;">' +
+      '<div style="font-size:8px;font-weight:600;color:#D4537E;margin-bottom:5px;">📝 メモ欄｜式場見学・当日相談用</div>' +
+      memoLines +
+    '</div>' +
+    '<div style="margin-top:8px;text-align:center;font-size:8px;color:#bbb;border-top:1px solid #eee;padding-top:6px;">@wedding_pocket｜もっと詳しい相談はInstagramのDMへ</div>';
+}
+
+async function saveAsA4Image() {
   const btn = document.getElementById('save-btn');
   btn.disabled = true;
   btn.textContent = '⏳ 画像を生成中...';
+
   try {
-    const target = document.getElementById('checklist');
-    const canvas = await html2canvas(target, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
-    const link = document.createElement('a');
+    const target = document.getElementById('pdf-target');
+    target.style.left = '0';
+    target.style.position = 'absolute';
+    target.style.zIndex = '-1';
+
+    await new Promise(r => setTimeout(r, 300));
+
+    // html2canvasをCDNから動的ロード
+    if (!window.html2canvas) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+        s.onload = resolve; s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    // A4サイズ: 794×1123px (96dpi)
+    const canvas = await html2canvas(target, {
+      scale: 2,
+      width: 794,
+      height: 1123,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      logging: false
+    });
+
+    target.style.left = '-9999px';
+    target.style.position = 'fixed';
+
     const name = document.getElementById('name-input').value || 'あなた';
+    const link = document.createElement('a');
     link.download = name + 'さんのこだわり表.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
   } catch(e) {
     alert('画像の生成に失敗しました。もう一度お試しください。');
+    console.error(e);
   }
+
   btn.disabled = false;
-  btn.innerHTML = '📸 チェックリストを画像で保存する';
+  btn.innerHTML = '📥 A4サイズの画像で保存する';
 }
 </script>
 </body>
